@@ -1,0 +1,17 @@
+{
+  "name": "quilt-learn",
+  "version": "1.0.0",
+  "description": "The learning sheet: backprop as reactive cells, quantum-seeded exploration games, and a GAN that breeds optimizers onto a living spreadsheet",
+  "type": "module",
+  "scripts": {
+    "demo:l1": "node learn/gradient_sheet.mjs",
+    "demo:l2": "node learn/explorers.mjs",
+    "demo:l3": "node learn/breeder.mjs",
+    "run": "node learn/run_all.mjs",
+    "smoke": "node learn/run_all.mjs --smoke"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "yaml": "^2.9.1"
+  }
+}
