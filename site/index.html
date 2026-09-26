@@ -65,17 +65,19 @@
 
   <div class="card">
     <span class="tag">L2 · the explorer games</span>
-    <h2>Entropy is not a method</h2>
-    <p>Four minds, one bandit, paired noise, ten seeds. UCB1's optimism is a
-    formula cell; BOLTZ and QUANTUM share the same annealed-softmax formulas
-    and differ in exactly one thing — where their randomness comes from. The
-    quantum mind's bits were harvested from a real MOTHquantum measurement
-    (one budgeted job), digest-seeded and receipted.</p>
+    <h2>The protocol rescued the quantum mind</h2>
+    <p>Six minds, one bandit, paired noise, ten seeds. v1's honest loss (the
+    quantum explorer came last) got a protocol answer, not a budget answer:
+    <b>qm2</b> draws per-seed sub-streams from the SAME single harvest, and the
+    <b>chord</b> mind spends quantum entropy ONLY at decision borders (UCB
+    structure + top-2 tie-breaks — the cortex doctrine as a competitor).</p>
     <div id="board"></div>
-    <p class="finding"><b>Finding:</b> the quantum explorer lost. True randomness
-    bought nothing that policy <i>structure</i> (UCB1's bound) didn't buy cheaper.
-    Entropy is a budget to ration, not a strategy.</p>
-    <img class="chart" src="outputs/explorers.png" alt="explorer scoreboard">
+    <p class="finding"><b>Finding:</b> per-seed re-seeding took the quantum mind from
+    last place (63.2) to FIRST (38.0) — how you <i>protocol</i> entropy matters
+    more than how much you spend. The chord adds reliability: ±5.6 variance and
+    5/10 identification without ever winning a seed outright. UCB1 still finds
+    the truth most often (7/10).</p>
+    <img class="chart" src="outputs/explorers.png" alt="explorer scoreboard v2">
   </div>
 
   <div class="card">
@@ -83,14 +85,15 @@
     <h2>The twin nominates; the sheet elects</h2>
     <p>A GAN whose generator proposes update rules and whose discriminator is
     the learning problem itself — judged at championship distance with
-    quilt-native gesture metrics (arc length, bending energy) on the loss
-    curve. The GAN breeds on a vectorized twin proven equivalent to the sheet
-    at 1.67e-16; the crowned genome then defends its title on the living engine.</p>
-    <img class="chart" src="outputs/championship.png" alt="championship loss curves">
-    <p class="finding"><b>Finding:</b> the bred crown took runner-up (2.95e-2) behind
-    the hand-tuned classic momentum(0.3) (9.5e-6). The championship also caught
-    momentum(0.06) converging to 7e-3 and then <i>exploding</i> — the exact
-    instability the discriminator's bending-energy term punishes.</p>
+    quilt-native gesture metrics (arc length, bending energy). The v2 genome
+    opens the classics' toolbox (adam moments, clipping, nesterov, warm
+    restarts) and must DISCOVER what King &amp; Ba shipped. The classics now
+    defend with a real Adam.</p>
+    <img class="chart" src="outputs/championship.png" alt="championship loss curves v2">
+    <p class="finding"><b>Finding:</b> the crown improved 3.4× (2.95e-2 → 8.75e-3 — it
+    discovered gradient clipping) but the shipped classics hold the podium:
+    momentum(0.3) defends the title (9.5e-6), Adam takes runner-up (2.16e-3).
+    The two-generation arc is the breeder's open ledger.</p>
     <img class="chart" src="outputs/breeder.png" alt="breeder generations">
   </div>
 
@@ -112,7 +115,7 @@ fetch('outputs/summary.json').then(r => r.json()).then(s => {
   document.getElementById('tip').textContent = s.chain.tip;
   const h = s.l2.harvest;
   document.getElementById('b-entropy').textContent = 'entropy ' + (h.mock ? 'mock (offline)' : 'LIVE ' + (h.jobId || '').slice(0, 8));
-  const names = { eps: 'eps-greedy', ucb: 'UCB1', bz: 'boltz (pseudo)', qm: 'quantum (MOTH)' };
+  const names = { eps: 'eps-greedy', ucb: 'UCB1', bz: 'boltz (pseudo)', qm: 'quantum v1 (shared)', qm2: 'quantum v2 (per-seed)', chord: 'chord (UCB+q-ties)' };
   const rows = Object.entries(s.l2.board).sort((a, b) => a[1].meanRegret - b[1].meanRegret);
   document.getElementById('board').innerHTML =
     '<table><tr><th>explorer</th><th>mean regret</th><th>±sd</th><th>identified</th><th>wins</th></tr>' +
@@ -120,7 +123,7 @@ fetch('outputs/summary.json').then(r => r.json()).then(s => {
       '<tr><td class="' + (e === s.l2.winner ? 'winner' : (e === 'qm' ? 'loser' : '')) + '">' + names[e] + '</td>' +
       '<td class="num">' + b.meanRegret.toFixed(1) + '</td><td class="num">' + b.sdRegret.toFixed(1) + '</td>' +
       '<td class="num">' + b.identified + '/10</td><td class="num">' + b.wins + '</td></tr>').join('') +
-    '</table>';
+    '</table><div style="font-size:12.5px;color:#9aa1ab;margin-top:4px">winner: ' + names[s.l2.winner] + ' · one live MOTH harvest per run · paired environment noise</div>';
 }).catch(() => {
   document.getElementById('tip').textContent = 'summary.json not found — run `node learn/run_all.mjs`';
 });

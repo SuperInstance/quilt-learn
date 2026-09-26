@@ -1,129 +1,177 @@
 {
   "config": {
-    "N": 6,
-    "H": 3,
-    "eagerSteps": 150,
-    "lazySteps": 120,
+    "N": 10,
+    "H": 4,
+    "eagerSteps": 700,
+    "lazySteps": 400,
     "convergeAt": 0.01,
     "seeds": [
       1,
-      2
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
     ],
-    "T": 60,
-    "K": 6,
-    "pop": 6,
-    "gens": 2,
-    "evalSteps": 150,
-    "champSteps": 150
+    "T": 200,
+    "K": 10,
+    "pop": 32,
+    "gens": 10,
+    "evalSteps": 700,
+    "champSteps": 700
   },
-  "smoke": true,
+  "smoke": false,
   "l1": {
     "fdProven": true
   },
   "l2": {
     "board": {
       "eps": {
-        "meanRegret": 23.69724000000001,
-        "sdRegret": 9.127532321454677,
-        "identified": 0,
-        "wins": 0
+        "meanRegret": 56.59690820000001,
+        "sdRegret": 30.420973575584494,
+        "identified": 2,
+        "wins": 1
       },
       "ucb": {
-        "meanRegret": 12.35274599999999,
-        "sdRegret": 0.8832428377394328,
-        "identified": 1,
+        "meanRegret": 42.59050180000001,
+        "sdRegret": 4.688482100108096,
+        "identified": 7,
         "wins": 1
       },
       "bz": {
-        "meanRegret": 17.772929999999995,
-        "sdRegret": 17.50577187115725,
-        "identified": 0,
-        "wins": 1
+        "meanRegret": 54.18079869999997,
+        "sdRegret": 34.139208580605924,
+        "identified": 1,
+        "wins": 2
       },
       "qm": {
-        "meanRegret": 25.178317499999984,
-        "sdRegret": 9.72350666537605,
-        "identified": 0,
-        "wins": 0
+        "meanRegret": 47.02523000000002,
+        "sdRegret": 48.14279302251795,
+        "identified": 2,
+        "wins": 3
       },
       "qm2": {
-        "meanRegret": 26.394480000000037,
-        "sdRegret": 12.94200571042992,
-        "identified": 0,
-        "wins": 0
+        "meanRegret": 38.01915949999993,
+        "sdRegret": 23.731566502253788,
+        "identified": 3,
+        "wins": 3
       },
       "chord": {
-        "meanRegret": 11.56203649999999,
-        "sdRegret": 2.0764042137118945,
-        "identified": 1,
+        "meanRegret": 43.38378170000003,
+        "sdRegret": 5.570263405336978,
+        "identified": 5,
         "wins": 0
       }
     },
-    "winner": "chord",
+    "winner": "qm2",
     "harvest": {
-      "mock": true,
-      "digest": "0xd93adc08741478a5",
-      "jobId": null
+      "mock": false,
+      "digest": "0xcbfc9447d3804fc7",
+      "jobId": "053f6f93-6ad5-4ece-a756-6b1320b773a6"
     }
   },
   "l3": {
     "crown": {
-      "lr0": 0.2,
-      "schedule": "sqrt",
+      "lr0": 0.1,
+      "schedule": "invtime",
       "warmPeriod": 200,
-      "beta": 0.9,
-      "beta2": 0.99,
-      "adaptive": "sign",
-      "clip": 3,
+      "beta": 0.8,
+      "beta2": 0.9,
+      "adaptive": "rms",
+      "clip": 1,
       "nesterov": false,
-      "hiddenMult": 1.7968548987992108,
-      "outMult": 1.7968546962365508,
+      "hiddenMult": 1.4837789749726653,
+      "outMult": 1.4837791775353253,
       "decay": 0
     },
     "podium": {
       "crown": {
-        "finalLoss": 0.15470456718099643,
-        "floor": 0.15470456718099643
+        "finalLoss": 0.008753728040350628,
+        "floor": 0.008753728040350628
       },
       "sgd(0.08)": {
-        "finalLoss": 0.19836460179647242,
-        "floor": 0.19836460179647242
+        "finalLoss": 0.03528618061292973,
+        "floor": 0.03528618061292973
       },
       "momentum(0.06)": {
-        "finalLoss": 0.16189349904561967,
-        "floor": 0.16189349904561967
+        "finalLoss": 0.2096750051977864,
+        "floor": 0.0070372903257370206
       },
       "momentum(0.3) tuned": {
-        "finalLoss": 0.1555351128948308,
-        "floor": 0.1555351128948308
+        "finalLoss": 0.000009522420335931009,
+        "floor": 0.000009522420335931009
       },
       "rmsprop(0.02)": {
-        "finalLoss": 0.1566676384007869,
-        "floor": 0.1566676384007869
+        "finalLoss": 0.11734230936974847,
+        "floor": 0.1173317794020842
       },
       "adam(0.05)": {
-        "finalLoss": 0.15000169691278603,
-        "floor": 0.15000169691278603
+        "finalLoss": 0.002161881979264942,
+        "floor": 0.0018810651686029128
       }
     },
-    "champion": "adam(0.05)",
+    "champion": "momentum(0.3) tuned",
     "history": [
       {
         "gen": 1,
-        "best": -4.047740472447199,
-        "mean": -2.658890079489423
+        "best": -6.78530125303491,
+        "mean": -4.866430832401027
       },
       {
         "gen": 2,
-        "best": -4.047740472447199,
-        "mean": -2.855979785193702
+        "best": -6.78530125303491,
+        "mean": -4.407491398632349
+      },
+      {
+        "gen": 3,
+        "best": -6.78530125303491,
+        "mean": -4.341247415983762
+      },
+      {
+        "gen": 4,
+        "best": -6.78530125303491,
+        "mean": -4.330153429165409
+      },
+      {
+        "gen": 5,
+        "best": -6.78530125303491,
+        "mean": -3.955023139094416
+      },
+      {
+        "gen": 6,
+        "best": -6.78530125303491,
+        "mean": -3.00026223298015
+      },
+      {
+        "gen": 7,
+        "best": -6.78530125303491,
+        "mean": -3.010277930741906
+      },
+      {
+        "gen": 8,
+        "best": -6.78530125303491,
+        "mean": -3.0617848845307662
+      },
+      {
+        "gen": 9,
+        "best": -6.78530125303491,
+        "mean": -3.821845620842554
+      },
+      {
+        "gen": 10,
+        "best": -6.78530125303491,
+        "mean": -3.4973041618896663
       }
     ]
   },
   "chain": {
-    "links": 19,
-    "tip": "0xd8930f3d331bf84a",
-    "digest": "0xd2d390ef6c7683ca"
+    "links": 35,
+    "tip": "0x9c823e35089a407f",
+    "digest": "0xa33384efdf2eafad"
   },
-  "finishedAt": "2026-09-26T00:12:49.353Z"
+  "finishedAt": "2026-09-26T00:19:23.146Z"
 }

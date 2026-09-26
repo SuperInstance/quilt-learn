@@ -1,24 +1,30 @@
 {
-  "artifact": "quilt-learn elite rule — crowned by the optimizer breeder",
-  "run": "full receipted run, 32-row witness chain, tip 0x001b7e908a6309ed",
+  "artifact": "quilt-learn elite rule — crowned by the optimizer breeder (v2 generation)",
+  "run": "v2 full receipted run, 35-row witness chain, tip 0x9c823e35089a407f",
   "genome": {
-    "lr0": 0.2,
+    "lr0": 0.1,
     "schedule": "invtime",
-    "beta": 0.9,
+    "warmPeriod": 200,
+    "beta": 0.8,
+    "beta2": 0.9,
     "adaptive": "rms",
-    "hiddenMult": 1.7968540885485709,
-    "outMult": 1.796853885985911,
+    "clip": 1,
+    "nesterov": false,
+    "hiddenMult": 1.4837789749726653,
+    "outMult": 1.4837791775353253,
     "decay": 0
   },
-  "interpretation": "rmsprop denominator with invtime lr decay, hidden-layer gradients amplified ~1.8x vs output layer",
+  "interpretation": "v1's crown improved 3.4x by discovering gradient clipping (clip=1) and a softer per-layer split (1.48x vs 1.8x); rms denominator + invtime decay retained",
   "championship": {
-    "crown_final": 0.02952,
+    "crown_final": 0.008754,
     "best_classic": { "name": "momentum(0.3)", "final": 0.000009522 },
-    "verdict": "2nd place — the hand-tuned classic holds the title; the gap is the next generation's work"
+    "runner_up": { "name": "adam(0.05)", "final": 0.002162 },
+    "verdict": "3rd place — the shipped classics hold the podium; the two-generation arc (2.95e-2 -> 8.75e-3) is the breeder's open ledger"
   },
   "provenance": {
     "twin_equivalence_worst_grad_delta": 1.67e-16,
-    "selection": "population 24, generations 8, evaluated at championship distance (700 steps, 3 inits)",
-    "discriminator_features": ["final loss (log)", "loss at 25% mark", "bending energy", "arc length"]
+    "selection": "population 32, generations 10, evaluated at championship distance (700 steps, 5 inits)",
+    "discriminator_features": ["final loss (log)", "loss at 25% mark", "bending energy", "arc length"],
+    "v2_genome_additions": ["adam moments (beta/beta2)", "gradient clipping", "nesterov momentum", "cosine warm restarts"]
   }
 }
