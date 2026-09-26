@@ -153,6 +153,18 @@ export class MothVault {
     };
   }
 
+  // v2 protocol: independent sub-streams derived from ONE harvested pool —
+  // per-seed re-seeding without spending more live jobs. The pool seeds a
+  // family; the key picks a member. Receipted digest + key = provenance.
+  streamFor(harvest, key) {
+    const seed = fnv1a64([harvest.poolDigest, key]);
+    let i = 0;
+    return () => {
+      const h = fnv1a64(`stream:${seed}:${i++}`);
+      return Number(BigInt(h) & 0xffffffffn) / 4294967296;
+    };
+  }
+
   // Inverse-CDF pick: weights -> index, using one draw from the stream.
   weightedPick(weights, u) {
     const total = weights.reduce((a, b) => a + Math.max(0, b), 0);

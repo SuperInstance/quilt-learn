@@ -21,7 +21,8 @@ import { fnv1a64 } from './receipts.mjs';
 import { rng, mean, sd } from './util.mjs';
 import { QuiltEngine } from '../engine/index.js';
 
-export const EXPLORERS = ['eps', 'ucb', 'bz', 'qm'];
+export const EXPLORERS = ['eps', 'ucb', 'bz', 'qm', 'qm2', 'chord'];
+const SOFTMAX_MINDS = ['bz', 'qm', 'qm2'];
 
 // Deterministic environment: Bernoulli means per (seed, arm), and a fixed
 // outcome bit per (seed, arm, pull) — a PAIRED design: all explorers face
@@ -53,15 +54,19 @@ export function buildSeedSheet(seed, bandit, K) {
     cells.push({ id: `reg.${e}`, kind: 'value', value: 0, description: 'cumulative regret' });
   }
   // UCB1 scores: the whole policy is one formula per arm — optimism as cells.
-  for (let k = 0; k < K; k++) {
-    cells.push({
-      id: `score.ucb.${k}`, kind: 'formula',
-      expr: `bel.ucb.q.${k} + Math.sqrt(2 * Math.log(bel.ucb.t + 1.01) / (bel.ucb.n.${k} + 0.01))`,
-    });
+  // The CHORD mind gets the SAME optimism formulas — its difference is at the
+  // decision border (quantum tie-break), not in the beliefs.
+  for (const e of ['ucb', 'chord']) {
+    for (let k = 0; k < K; k++) {
+      cells.push({
+        id: `score.${e}.${k}`, kind: 'formula',
+        expr: `bel.${e}.q.${k} + Math.sqrt(2 * Math.log(bel.${e}.t + 1.01) / (bel.${e}.n.${k} + 0.01))`,
+      });
+    }
   }
-  // BOLTZ/QUANTUM weights: annealed softmax IN the sheet. Temperature is a
-  // formula of t: hot early (explore), cold late (exploit).
-  for (const e of ['bz', 'qm']) {
+  // BOLTZ/QUANTUM/QUANTUM-2 weights: annealed softmax IN the sheet.
+  // Temperature is a formula of t: hot early (explore), cold late (exploit).
+  for (const e of SOFTMAX_MINDS) {
     for (let k = 0; k < K; k++) {
       cells.push({
         id: `w.${e}.${k}`, kind: 'formula',
@@ -76,26 +81,31 @@ export function buildSeedSheet(seed, bandit, K) {
 
 const G = async (engine, id) => (await engine.get(id)).data;
 
-// --- run one seed for all four explorers
-// pickers = { epsStream(), bzPick(w), qmPick(w) } — EPS/BOLTZ draw from the
-// pseudorandom stream; QUANTUM draws through the vault's harvested stream.
+// --- run one seed for all six explorers
+// pickers = { epsStream(), bzPick(w), qmPick(w), qm2Pick(w), chordPick(scores) }
+// v2 protocol: qm keeps the v1 shared realization (so the v1 result stays
+// comparable); qm2 draws from a PER-SEED re-seeded stream (independent
+// randomness per seed — the statistical fix); chord spends quantum entropy
+// ONLY at decision borders (cortex doctrine: entropy for ties).
 export async function runSeed(seed, { K = 10, T = 200, pickers } = {}) {
   const bandit = makeBandit(seed, K);
   const engine = new QuiltEngine(`explorers.seed.${seed}`, { eager: false });
   engine.loadSheet({ id: `explorers.${seed}`, title: `explorer games seed ${seed}`, cells: buildSeedSheet(seed, bandit, K) });
   const streams = { eps: pickers.epsStream };
-  const picks = { eps: [], ucb: [], bz: [], qm: [] };
+  const picks = Object.fromEntries(EXPLORERS.map((e) => [e, []]));
+  let chordTieBreaks = 0;
 
   for (let t = 1; t <= T; t++) {
     // phase 1 — read every policy input BEFORE any write (one graph sweep)
-    const q = {}, n = {}, sc = {}, w = {}, tt = {};
+    const q = {}, n = {}, sc = {}, scc = {}, w = {}, tt = {};
     for (const e of EXPLORERS) {
       tt[e] = await G(engine, `bel.${e}.t`);
       q[e] = []; n[e] = [];
       for (let k = 0; k < K; k++) { q[e].push(await G(engine, `bel.${e}.q.${k}`)); n[e].push(await G(engine, `bel.${e}.n.${k}`)); }
     }
     for (let k = 0; k < K; k++) sc[k] = await G(engine, `score.ucb.${k}`);
-    for (const e of ['bz', 'qm']) { w[e] = []; for (let k = 0; k < K; k++) w[e].push(await G(engine, `w.${e}.${k}`)); }
+    for (let k = 0; k < K; k++) scc[k] = await G(engine, `score.chord.${k}`);
+    for (const e of SOFTMAX_MINDS) { w[e] = []; for (let k = 0; k < K; k++) w[e].push(await G(engine, `w.${e}.${k}`)); }
 
     // phase 2 — pick arms
     const pick = {};
@@ -110,9 +120,22 @@ export async function runSeed(seed, { K = 10, T = 200, pickers } = {}) {
       let bi = 0; for (let k = 1; k < K; k++) if (sc[k] > sc[bi]) bi = k;
       pick.ucb = bi;
     }
-    // BOLTZ / QUANTUM: inverse-CDF over the sheet's annealed weights —
-    // identical policy, different entropy source
-    for (const e of ['bz', 'qm']) pick[e] = pickers[e + 'Pick'](w[e]);
+    // BOLTZ / QUANTUM / QUANTUM-2: inverse-CDF over the sheet's annealed
+    // weights — identical policy, entropy source is the only variable
+    for (const e of SOFTMAX_MINDS) pick[e] = pickers[e + 'Pick'](w[e]);
+    // CHORD: UCB structure; quantum entropy spent ONLY at the border
+    {
+      let bi = 0; for (let k = 1; k < K; k++) if (scc[k] > scc[bi]) bi = k;
+      let si = -1; for (let k = 0; k < K; k++) if (k !== bi && (si < 0 || scc[k] > scc[si])) si = k;
+      const gap = (scc[si] - scc[bi]) / Math.max(1e-9, Math.abs(scc[bi]));
+      if (gap < 0.08) {
+        const tau = 0.05 * (Math.abs(scc[bi]) + Math.abs(scc[si]) + 1e-9);
+        const w1 = Math.exp(scc[bi] / tau), w2 = Math.exp(scc[si] / tau);
+        const u = pickers.chordStream();
+        pick.chord = (u * (w1 + w2) < w1) ? bi : si;
+        chordTieBreaks++;
+      } else pick.chord = bi;
+    }
 
     // phase 3 — the environment answers (paired noise), the sheet updates
     for (const e of EXPLORERS) {
@@ -129,7 +152,7 @@ export async function runSeed(seed, { K = 10, T = 200, pickers } = {}) {
     }
   }
 
-  const result = { seed, best: bandit.best, means: bandit.means.map((m) => Math.round(m * 1000) / 1000) };
+  const result = { seed, best: bandit.best, means: bandit.means.map((m) => Math.round(m * 1000) / 1000), chordTieBreaks };
   for (const e of EXPLORERS) {
     const finalQ = []; for (let k = 0; k < K; k++) finalQ.push(await G(engine, `bel.${e}.q.${k}`));
     const identified = finalQ.indexOf(Math.max(...finalQ)) === bandit.best;
@@ -143,17 +166,26 @@ export async function runSeed(seed, { K = 10, T = 200, pickers } = {}) {
 }
 
 // --- the full competition: one harvest, every seed, paired environments
+// qm  = shared quantum realization (v1 protocol, kept for comparability)
+// qm2 = per-seed re-seeded quantum streams (v2 protocol fix)
+// chord = UCB structure + quantum tie-breaks at decision borders
 export async function competition({ seeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], T = 200, K = 10, vault } = {}) {
   const harvest = await vault.harvest(256);
-  const qstream = vault.stream(harvest);
+  const shared = vault.stream(harvest);
+  const chordStream = vault.streamFor(harvest, 'chord');
   const pseudo = rng(424242);
-  const pickers = {
-    epsStream: pseudo,
-    bzPick: (w) => weightedPickLocal(w, pseudo()),
-    qmPick: (w) => weightedPickLocal(w, qstream()),
-  };
   const results = [];
-  for (const seed of seeds) results.push(await runSeed(seed, { K, T, pickers }));
+  for (const seed of seeds) {
+    const perSeed = vault.streamFor(harvest, `seed:${seed}`);
+    const pickers = {
+      epsStream: pseudo,
+      bzPick: (w) => weightedPickLocal(w, pseudo()),
+      qmPick: (w) => weightedPickLocal(w, shared()),
+      qm2Pick: (w) => weightedPickLocal(w, perSeed()),
+      chordStream,
+    };
+    results.push(await runSeed(seed, { K, T, pickers }));
+  }
   return { harvest, results };
 }
 

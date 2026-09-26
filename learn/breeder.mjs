@@ -99,13 +99,21 @@ export function makeTwin({ N = 10, H = 4, initSeed = 7 } = {}) {
   return { forwardBackward, HIDDEN, OUT, N, H };
 }
 
-// ---------------- the genome space ----------------
+// ---------------- the genome space (v2: wider) ----------------
+// v1 bred rmsprop+invtime+per-layer mults to runner-up. v2 opens the space
+// the classics live in: adam-family moments, gradient clipping, nesterov
+// momentum, cosine warm restarts — the GAN gets the same toolbox King & Ba
+// had, and must DISCOVER what they shipped.
 export function randomGenome(stream) {
   return {
     lr0: [0.02, 0.05, 0.1, 0.2, 0.3, 0.5][Math.floor(stream() * 6)],
-    schedule: ['const', 'invtime', 'sqrt'][Math.floor(stream() * 3)],
-    beta: [0, 0.5, 0.8, 0.9, 0.95][Math.floor(stream() * 5)],
-    adaptive: ['none', 'rms', 'sign'][Math.floor(stream() * 3)],
+    schedule: ['const', 'invtime', 'sqrt', 'warm'][Math.floor(stream() * 4)],
+    warmPeriod: [100, 200, 350][Math.floor(stream() * 3)],
+    beta: [0, 0.5, 0.8, 0.9, 0.95, 0.99][Math.floor(stream() * 6)],
+    beta2: [0, 0.9, 0.99, 0.999][Math.floor(stream() * 4)],
+    adaptive: ['none', 'rms', 'sign', 'adam'][Math.floor(stream() * 4)],
+    clip: [0, 1, 3, 10][Math.floor(stream() * 4)],
+    nesterov: stream() < 0.3,
     hiddenMult: 0.5 + stream() * 2,
     outMult: 0.5 + stream() * 2,
     decay: 0,
@@ -114,9 +122,13 @@ export function randomGenome(stream) {
 export function mutate(g, stream) {
   const c = { ...g };
   if (stream() < 0.5) c.lr0 = [0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.8][Math.floor(stream() * 8)];
-  if (stream() < 0.3) c.schedule = ['const', 'invtime', 'sqrt'][Math.floor(stream() * 3)];
+  if (stream() < 0.3) c.schedule = ['const', 'invtime', 'sqrt', 'warm'][Math.floor(stream() * 4)];
+  if (stream() < 0.2) c.warmPeriod = [100, 200, 350][Math.floor(stream() * 3)];
   if (stream() < 0.4) c.beta = [0, 0.5, 0.8, 0.9, 0.95, 0.99][Math.floor(stream() * 6)];
-  if (stream() < 0.4) c.adaptive = ['none', 'rms', 'sign'][Math.floor(stream() * 3)];
+  if (stream() < 0.35) c.beta2 = [0, 0.9, 0.99, 0.999][Math.floor(stream() * 4)];
+  if (stream() < 0.4) c.adaptive = ['none', 'rms', 'sign', 'adam'][Math.floor(stream() * 4)];
+  if (stream() < 0.3) c.clip = [0, 1, 3, 10][Math.floor(stream() * 4)];
+  if (stream() < 0.2) c.nesterov = !c.nesterov;
   if (stream() < 0.5) c.hiddenMult = Math.max(0.1, c.hiddenMult * (0.5 + stream()));
   if (stream() < 0.5) c.outMult = Math.max(0.1, c.outMult * (0.5 + stream()));
   return c;
@@ -126,7 +138,7 @@ export function crossover(a, b, stream) {
 }
 
 // ---------------- the discriminator ----------------
-export function evaluateGenome(genome, { steps = 400, initSeeds = [7, 11, 23] } = {}) {
+export function evaluateGenome(genome, { steps = 400, initSeeds = [7, 11, 23, 29, 41] } = {}) {
   const trajs = [];
   for (const seed of initSeeds) {
     const twin = makeTwin({ initSeed: seed });

@@ -16,7 +16,7 @@ import { sealChain, verifyChain, fnv1a64 } from './receipts.mjs';
 import { mean, sd } from './util.mjs';
 import { MothVault } from './moth.mjs';
 import {
-  loadGradientSheet, fdCheck, train, momentumRule, sgdRule, rmspropRule, genomeRule,
+  loadGradientSheet, fdCheck, train, momentumRule, sgdRule, rmspropRule, adamRule, genomeRule,
 } from './gradient_sheet.mjs';
 import { competition, EXPLORERS } from './explorers.mjs';
 import { twinEquivalence, breed } from './breeder.mjs';
@@ -32,7 +32,7 @@ const CFG = SMOKE ? {
 } : {
   N: 10, H: 4, eagerSteps: 700, lazySteps: 400, convergeAt: 0.01,
   seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], T: 200, K: 10,
-  pop: 24, gens: 8, evalSteps: 700, champSteps: 700,
+  pop: 32, gens: 10, evalSteps: 700, champSteps: 700,
 };
 
 const rows = [];
@@ -83,7 +83,7 @@ const vault = new MothVault({ label: 'run_all', maxLiveJobs: 1, offline: process
   for (const r of results) {
     const win = EXPLORERS.reduce((a, b) => (r[b].regret < r[a].regret ? b : a));
     board[win].wins++;
-    book('l2.seed', { seed: r.seed, best: r.best, regret: Object.fromEntries(EXPLORERS.map((e) => [e, r[e].regret])), identified: Object.fromEntries(EXPLORERS.map((e) => [e, r[e].identified])) });
+    book('l2.seed', { seed: r.seed, best: r.best, chordTieBreaks: r.chordTieBreaks, regret: Object.fromEntries(EXPLORERS.map((e) => [e, r[e].regret])), identified: Object.fromEntries(EXPLORERS.map((e) => [e, r[e].identified])) });
   }
   const winner = EXPLORERS.reduce((a, b) => (board[b].meanRegret < board[a].meanRegret ? b : a));
   book('l2.scoreboard', { board, winner, seeds: CFG.seeds.length, T: CFG.T, paired: true });
@@ -112,13 +112,15 @@ let crown;
   console.log(`breed: champion score=${champion.score.toFixed(3)} meanFinal=${champion.meanFinal.toExponential(2)}`);
   console.log('  crown genome:', JSON.stringify(crown));
 
-  // the championship — ON the living sheet (lazy engines, same distance)
+  // the championship — ON the living sheet (lazy engines, same distance).
+  // v2: the classics bring Adam — the breeder must beat a REAL defense now.
   const entries = [
     ['crown', genomeRule(crown)],
     ['sgd(0.08)', sgdRule(0.08)],
     ['momentum(0.06)', momentumRule(0.06)],
     ['momentum(0.3) tuned', momentumRule(0.3)],
     ['rmsprop(0.02)', rmspropRule(0.02)],
+    ['adam(0.05)', adamRule(0.05)],
   ];
   const podium = {};
   for (const [tag, rule] of entries) {

@@ -168,33 +168,76 @@ export function rmspropRule(lr, rho = 0.9) {
 
 // Interpret a breeder genome as a rule (the crown seam: whatever the GAN
 // discovers runs through this SAME apply path as the classics).
+// v2 genome space adds: gradient clipping, nesterov momentum, warm (cosine
+// restart) schedules, and an adam-family adaptive mode (m-hat / sqrt(v-hat)).
 export function genomeRule(genome) {
-  const { lr0, schedule, beta, adaptive, hiddenMult, outMult, decay } = genome;
+  const {
+    lr0, schedule, beta = 0, beta2 = 0, adaptive = 'none',
+    hiddenMult = 1, outMult = 1, decay = 0, clip = 0, nesterov = false, warmPeriod = 200,
+  } = genome;
   return {
-    name: `crown(${JSON.stringify(genome)})`.slice(0, 88),
+    name: `crown(${JSON.stringify(genome)})`.slice(0, 96),
     make: () => {
-      const v = new Map(), s = new Map();
+      const v = new Map(), s = new Map(); // momentum (m), rms (v)
       let t = 0;
       return {
         apply: (p, g) => {
           t++;
-          const lr = schedule === 'invtime' ? lr0 / (1 + 0.02 * t) : schedule === 'sqrt' ? lr0 / Math.sqrt(t) : lr0;
+          // schedule: const | invtime | sqrt | warm (cosine restart)
+          let lr;
+          if (schedule === 'invtime') lr = lr0 / (1 + 0.02 * t);
+          else if (schedule === 'sqrt') lr = lr0 / Math.sqrt(t);
+          else if (schedule === 'warm') {
+            const x = (t % warmPeriod) / warmPeriod;
+            lr = lr0 * (0.5 * (1 + Math.cos(Math.PI * x)) * 0.9 + 0.1);
+          } else lr = lr0;
           const isHidden = p.includes('W1.') || p.includes('b1.');
           const m = isHidden ? hiddenMult : outMult;
-          const ge = decay ? g + decay * 0 : g;
+          // gradient clipping (by value; 0 = off)
+          let ge = decay ? g + decay * 0 : g;
+          if (clip > 0) ge = Math.max(-clip, Math.min(clip, ge));
           let dp;
-          if (adaptive === 'rms') {
-            const u = (s.get(p) || 0) * 0.9 + 0.1 * ge * ge; s.set(p, u);
-            dp = -lr * m * ge / (Math.sqrt(u) + 1e-8);
+          if (adaptive === 'adam') {
+            const mu = (v.get(p) || 0) * beta + (1 - beta) * ge; v.set(p, mu);       // 1st moment
+            const nu = (s.get(p) || 0) * beta2 + (1 - beta2) * ge * ge; s.set(p, nu); // 2nd moment
+            const mh = mu / (1 - Math.pow(beta, t));
+            const nh = nu / (1 - Math.pow(beta2, t));
+            dp = -lr * m * mh / (Math.sqrt(nh) + 1e-8);
+          } else if (adaptive === 'rms') {
+            const nu = (s.get(p) || 0) * 0.9 + 0.1 * ge * ge; s.set(p, nu);
+            dp = -lr * m * ge / (Math.sqrt(nu) + 1e-8);
           } else if (adaptive === 'sign') {
             dp = -lr * m * Math.sign(ge);
           } else if (adaptive === 'none' && beta > 0) {
-            const u = (v.get(p) || 0) * beta + ge; v.set(p, u);
-            dp = -lr * m * u;
+            const prev = v.get(p) || 0;
+            const mu = prev * beta + ge; v.set(p, mu);
+            const use = nesterov ? ge + beta * mu : mu;
+            dp = -lr * m * use;
           } else {
             dp = -lr * m * ge;
           }
           return { dp };
+        },
+      };
+    },
+  };
+}
+
+// A shipped classic joins the championship defense: hand-rolled Adam.
+export function adamRule(lr, beta = 0.9, beta2v = 0.999) {
+  return {
+    name: `adam(lr=${lr})`,
+    make: () => {
+      const m = new Map(), v = new Map();
+      let t = 0;
+      return {
+        apply: (p, g) => {
+          t++;
+          const mu = (m.get(p) || 0) * beta + (1 - beta) * g; m.set(p, mu);
+          const nu = (v.get(p) || 0) * beta2v + (1 - beta2v) * g * g; v.set(p, nu);
+          const mh = mu / (1 - Math.pow(beta, t));
+          const nh = nu / (1 - Math.pow(beta2v, t));
+          return { dp: -lr * mh / (Math.sqrt(nh) + 1e-8) };
         },
       };
     },
