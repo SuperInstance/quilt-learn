@@ -6,10 +6,17 @@ on:
 jobs:
   learn:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm install --no-audit --no-fund
-      - name: L1 autograd sheet — fd proof + training
+      - name: smoke (mechanics, receipts)
+        run: node learn/run_all.mjs --smoke
+      - name: L1 autograd sheet — fd proof + listener demo
         run: node learn/gradient_sheet.mjs
+      - name: L2 explorer games (offline entropy)
+        run: MOTH_OFFLINE=1 node learn/explorers.mjs
+      - name: L3 breeder — twin equivalence + evolution
+        run: node learn/breeder.mjs

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>quilt-learn — the learning sheet</title>
+<style>
+  :root { --ink:#1a2332; --paper:#fbfaf7; --blue:#2f6f8f; --orange:#c96f2e; --teal:#3d8a7d; --gray:#9aa1ab; --red:#a94438; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 Georgia, 'Times New Roman', serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px 80px; }
+  header { padding: 56px 0 8px; }
+  h1 { font-size: 44px; margin: 0 0 6px; letter-spacing: -0.5px; }
+  h1 .accent { color: var(--red); }
+  .sub { color: var(--gray); font-style: italic; margin-bottom: 26px; }
+  .badges { display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 40px; }
+  .badge { font: 12px/1 ui-monospace, Menlo, monospace; border: 1px solid var(--ink); padding: 5px 10px; border-radius: 999px; background:#fff; }
+  .badge.ok { border-color: var(--teal); color: var(--teal); }
+  .card { background:#fff; border:1px solid #e5e2da; border-radius: 14px; padding: 26px 28px; margin: 26px 0; box-shadow: 0 1px 3px rgba(26,35,50,.05); }
+  .card h2 { margin: 0 0 4px; font-size: 22px; }
+  .card .tag { font: 11px/1 ui-monospace, monospace; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray); }
+  .card p { margin: 12px 0; }
+  table { width:100%; border-collapse: collapse; margin: 14px 0; font-size: 14.5px; }
+  th { text-align:left; border-bottom: 2px solid var(--ink); padding: 7px 8px; font-family: ui-monospace, monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  td { border-bottom: 1px solid #eee9df; padding: 7px 8px; }
+  td.num { font-family: ui-monospace, monospace; }
+  .winner { color: var(--teal); font-weight: bold; }
+  .loser { color: var(--red); }
+  img.chart { width: 100%; border: 1px solid #e5e2da; border-radius: 10px; margin: 12px 0; }
+  .finding { border-left: 3px solid var(--orange); padding: 8px 16px; background: #fdf7f0; border-radius: 0 8px 8px 0; }
+  .finding b { color: var(--orange); }
+  footer { margin-top: 48px; color: var(--gray); font-size: 13.5px; border-top: 1px solid #e5e2da; padding-top: 18px; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 13px; background:#f2efe8; padding: 1px 5px; border-radius: 5px; }
+  .chain { font-family: ui-monospace, monospace; font-size: 12.5px; color: var(--teal); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>quilt<span class="accent">-</span>learn</h1>
+    <div class="sub">backprop as reactive cells · quantum-seeded exploration games · a GAN that breeds optimizers onto a living spreadsheet</div>
+    <div class="badges">
+      <span class="badge ok" id="b-fd">fd proof —</span>
+      <span class="badge ok" id="b-twin">twin equivalence —</span>
+      <span class="badge ok" id="b-chain">witness chain —</span>
+      <span class="badge" id="b-entropy">entropy —</span>
+    </div>
+  </header>
+
+  <div class="card">
+    <span class="tag">L1 · the autograd sheet</span>
+    <h2>Backprop is just more sheet</h2>
+    <p>In quilt, the dependency graph <i>is</i> the computational graph and the
+    engine's memoized pull <i>is</i> forward propagation. Every gradient in this
+    network is a formula cell; the trainer only ever calls <code>set()</code> on 13
+    parameter cells. A listener cell watches the loss and — all by itself —
+    flips the flag that says <i>this sheet has learned</i>.</p>
+    <table>
+      <tr><th>proof</th><th>value</th></tr>
+      <tr><td>sheet gradients vs finite differences</td><td class="num">max rel err 8.17e-10</td></tr>
+      <tr><td>full training on the engine (momentum 0.3, 700 steps)</td><td class="num">final MSE 9.5e-6</td></tr>
+      <tr><td>the sheet knowing it converged</td><td class="num winner">listener fired 4048×</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <span class="tag">L2 · the explorer games</span>
+    <h2>Entropy is not a method</h2>
+    <p>Four minds, one bandit, paired noise, ten seeds. UCB1's optimism is a
+    formula cell; BOLTZ and QUANTUM share the same annealed-softmax formulas
+    and differ in exactly one thing — where their randomness comes from. The
+    quantum mind's bits were harvested from a real MOTHquantum measurement
+    (one budgeted job), digest-seeded and receipted.</p>
+    <div id="board"></div>
+    <p class="finding"><b>Finding:</b> the quantum explorer lost. True randomness
+    bought nothing that policy <i>structure</i> (UCB1's bound) didn't buy cheaper.
+    Entropy is a budget to ration, not a strategy.</p>
+    <img class="chart" src="outputs/explorers.png" alt="explorer scoreboard">
+  </div>
+
+  <div class="card">
+    <span class="tag">L3 · the optimizer breeder</span>
+    <h2>The twin nominates; the sheet elects</h2>
+    <p>A GAN whose generator proposes update rules and whose discriminator is
+    the learning problem itself — judged at championship distance with
+    quilt-native gesture metrics (arc length, bending energy) on the loss
+    curve. The GAN breeds on a vectorized twin proven equivalent to the sheet
+    at 1.67e-16; the crowned genome then defends its title on the living engine.</p>
+    <img class="chart" src="outputs/championship.png" alt="championship loss curves">
+    <p class="finding"><b>Finding:</b> the bred crown took runner-up (2.95e-2) behind
+    the hand-tuned classic momentum(0.3) (9.5e-6). The championship also caught
+    momentum(0.06) converging to 7e-3 and then <i>exploding</i> — the exact
+    instability the discriminator's bending-energy term punishes.</p>
+    <img class="chart" src="outputs/breeder.png" alt="breeder generations">
+  </div>
+
+  <footer>
+    <div>Witness chain tip: <span class="chain" id="tip">—</span></div>
+    <div style="margin-top:6px">engine vendored from <code>SuperInstance/quilt</code> (play-test-patched) · siblings:
+    <a href="https://github.com/SuperInstance/quilt-loom">loom</a> ·
+    <a href="https://github.com/SuperInstance/quilt-cortex">cortex</a> ·
+    <a href="https://github.com/SuperInstance/quilt-arena">arena</a> ·
+    <a href="https://github.com/SuperInstance/quilt-quant">quant</a> ·
+    <a href="https://github.com/SuperInstance/quilt-mesh">mesh</a></div>
+  </footer>
+</div>
+<script>
+fetch('outputs/summary.json').then(r => r.json()).then(s => {
+  document.getElementById('b-fd').textContent = 'fd proof 8.17e-10';
+  document.getElementById('b-twin').textContent = 'twin equivalence 1.67e-16';
+  document.getElementById('b-chain').textContent = 'chain ' + s.chain.links + ' rows verified';
+  document.getElementById('tip').textContent = s.chain.tip;
+  const h = s.l2.harvest;
+  document.getElementById('b-entropy').textContent = 'entropy ' + (h.mock ? 'mock (offline)' : 'LIVE ' + (h.jobId || '').slice(0, 8));
+  const names = { eps: 'eps-greedy', ucb: 'UCB1', bz: 'boltz (pseudo)', qm: 'quantum (MOTH)' };
+  const rows = Object.entries(s.l2.board).sort((a, b) => a[1].meanRegret - b[1].meanRegret);
+  document.getElementById('board').innerHTML =
+    '<table><tr><th>explorer</th><th>mean regret</th><th>±sd</th><th>identified</th><th>wins</th></tr>' +
+    rows.map(([e, b], i) =>
+      '<tr><td class="' + (e === s.l2.winner ? 'winner' : (e === 'qm' ? 'loser' : '')) + '">' + names[e] + '</td>' +
+      '<td class="num">' + b.meanRegret.toFixed(1) + '</td><td class="num">' + b.sdRegret.toFixed(1) + '</td>' +
+      '<td class="num">' + b.identified + '/10</td><td class="num">' + b.wins + '</td></tr>').join('') +
+    '</table>';
+}).catch(() => {
+  document.getElementById('tip').textContent = 'summary.json not found — run `node learn/run_all.mjs`';
+});
+</script>
+</body>
+</html>

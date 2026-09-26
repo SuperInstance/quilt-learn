@@ -1,0 +1,24 @@
+{
+  "artifact": "quilt-learn elite rule — crowned by the optimizer breeder",
+  "run": "full receipted run, 32-row witness chain, tip 0x001b7e908a6309ed",
+  "genome": {
+    "lr0": 0.2,
+    "schedule": "invtime",
+    "beta": 0.9,
+    "adaptive": "rms",
+    "hiddenMult": 1.7968540885485709,
+    "outMult": 1.796853885985911,
+    "decay": 0
+  },
+  "interpretation": "rmsprop denominator with invtime lr decay, hidden-layer gradients amplified ~1.8x vs output layer",
+  "championship": {
+    "crown_final": 0.02952,
+    "best_classic": { "name": "momentum(0.3)", "final": 0.000009522 },
+    "verdict": "2nd place — the hand-tuned classic holds the title; the gap is the next generation's work"
+  },
+  "provenance": {
+    "twin_equivalence_worst_grad_delta": 1.67e-16,
+    "selection": "population 24, generations 8, evaluated at championship distance (700 steps, 3 inits)",
+    "discriminator_features": ["final loss (log)", "loss at 25% mark", "bending energy", "arc length"]
+  }
+}

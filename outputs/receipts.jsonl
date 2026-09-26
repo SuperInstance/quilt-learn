@@ -1,0 +1,32 @@
+{"seq":1,"kind":"l1.fdcheck","ok":true,"maxRelErr":8.170507140457112e-10,"worst":"nn.b1.1","N":10,"H":4,"row_hash":"0xf3717fd6b190e236"}
+{"seq":2,"kind":"l1.eager.listener","rule":"momentum(lr=0.3,b=0.9)","steps":700,"finalLoss":0.000009522420335931009,"converged":true,"firings":4048,"mode":"eager","row_hash":"0x2788ce9122b033f2"}
+{"seq":3,"kind":"l1.lazy.contrast","rule":"sgd(0.08)","steps":400,"finalLoss":0.05488133825579363,"mode":"lazy","row_hash":"0x91f13cbbb269454f"}
+{"seq":4,"kind":"l1.lazy.contrast","rule":"momentum(0.06)","steps":400,"finalLoss":0.011588429148095585,"mode":"lazy","row_hash":"0xabccf5ed215821a3"}
+{"seq":5,"kind":"l1.lazy.contrast","rule":"rmsprop(0.02)","steps":400,"finalLoss":0.11769214787915275,"mode":"lazy","row_hash":"0x7d592f7598152919"}
+{"seq":6,"kind":"l2.harvest","mock":false,"why":null,"bits":256,"poolDigest":"0x1597d15409bbdb03","jobId":"b9586be0-3e30-4386-9c49-7b48da96ee7e","row_hash":"0xcec9a44abc48787a"}
+{"seq":7,"kind":"l2.seed","seed":1,"best":5,"regret":{"eps":57.47700000000008,"ucb":43.971508000000114,"bz":3.4116949999999995,"qm":17.98159999999996},"identified":{"eps":false,"ucb":true,"bz":true,"qm":false},"row_hash":"0xee3a7ef7225d1e5c"}
+{"seq":8,"kind":"l2.seed","seed":2,"best":1,"regret":{"eps":100.50459999999997,"ucb":44.72134100000021,"bz":21.513799999999897,"qm":61.00920000000044},"identified":{"eps":false,"ucb":false,"bz":false,"qm":false},"row_hash":"0x106b4527754f55ac"}
+{"seq":9,"kind":"l2.seed","seed":3,"best":1,"regret":{"eps":39.49539999999988,"ucb":34.434904,"bz":100.50459999999953,"qm":100.50459999999953},"identified":{"eps":false,"ucb":false,"bz":false,"qm":false},"row_hash":"0x30ab017df155b5da"}
+{"seq":10,"kind":"l2.seed","seed":4,"best":0,"regret":{"eps":0,"ucb":38.91264299999989,"bz":39.495399999999954,"qm":118.48620000000028},"identified":{"eps":true,"ucb":true,"bz":false,"qm":false},"row_hash":"0x66ab86da92651733"}
+{"seq":11,"kind":"l2.seed","seed":5,"best":3,"regret":{"eps":100.50460000000056,"ucb":40.911485999999876,"bz":39.49539999999995,"qm":39.49539999999995},"identified":{"eps":false,"ucb":true,"bz":false,"qm":false},"row_hash":"0x26e992833b6048af"}
+{"seq":12,"kind":"l2.seed","seed":6,"best":3,"regret":{"eps":39.49539999999993,"ucb":39.06838600000006,"bz":78.99080000000033,"qm":78.99080000000033},"identified":{"eps":false,"ucb":true,"bz":false,"qm":false},"row_hash":"0x22ba93ec39b377e1"}
+{"seq":13,"kind":"l2.seed","seed":7,"best":2,"regret":{"eps":52.528881999999975,"ucb":50.98275700000008,"bz":78.99079999999988,"qm":39.495399999999876},"identified":{"eps":true,"ucb":true,"bz":false,"qm":false},"row_hash":"0x2f6dcf2a3e8feafc"}
+{"seq":14,"kind":"l2.seed","seed":8,"best":2,"regret":{"eps":61.0092000000003,"ucb":46.32520200000002,"bz":39.49539999999993,"qm":61.0092000000003},"identified":{"eps":false,"ucb":true,"bz":false,"qm":false},"row_hash":"0xfa4a87db5a070b16"}
+{"seq":15,"kind":"l2.seed","seed":9,"best":9,"regret":{"eps":75.45859999999944,"ucb":40.96759100000006,"bz":35.87329200000015,"qm":35.96320000000014},"identified":{"eps":false,"ucb":true,"bz":false,"qm":false},"row_hash":"0xc1c14c76b316f56d"}
+{"seq":16,"kind":"l2.seed","seed":10,"best":1,"regret":{"eps":39.49539999999993,"ucb":45.609199999999895,"bz":104.03680000000008,"qm":78.9907999999999},"identified":{"eps":false,"ucb":false,"bz":false,"qm":false},"row_hash":"0xae60738e0a477199"}
+{"seq":17,"kind":"l2.scoreboard","board":{"eps":{"meanRegret":56.59690820000001,"sdRegret":30.420973575584494,"identified":2,"wins":2},"ucb":{"meanRegret":42.59050180000001,"sdRegret":4.688482100108096,"identified":7,"wins":2},"bz":{"meanRegret":54.18079869999997,"sdRegret":34.139208580605924,"identified":1,"wins":5},"qm":{"meanRegret":63.192640000000075,"sdRegret":31.38799767707396,"identified":0,"wins":1}},"winner":"ucb","seeds":10,"T":200,"paired":true,"row_hash":"0x74b019c8f071fe05"}
+{"seq":18,"kind":"l3.twinEquivalence","ok":true,"worstGradDelta":1.6653345369377348e-16,"row_hash":"0x9ae0f5bf36d14eaf"}
+{"seq":19,"kind":"l3.generation","gen":1,"bestScore":-6.24300607244312,"meanScore":-4.165792887443303,"bestFinal":0.013857411958313262,"row_hash":"0xd20ccc8774fdf776"}
+{"seq":20,"kind":"l3.generation","gen":2,"bestScore":-6.24300607244312,"meanScore":-4.331984607493211,"bestFinal":0.013857411958313262,"row_hash":"0x7ca15da500914f4b"}
+{"seq":21,"kind":"l3.generation","gen":3,"bestScore":-6.24300607244312,"meanScore":-4.931320296555518,"bestFinal":0.013857411958313262,"row_hash":"0x0c20b01560c61f7c"}
+{"seq":22,"kind":"l3.generation","gen":4,"bestScore":-6.24300607244312,"meanScore":-4.931290471053321,"bestFinal":0.013857411958313262,"row_hash":"0xb6f0ab759ffe52fa"}
+{"seq":23,"kind":"l3.generation","gen":5,"bestScore":-6.24300607244312,"meanScore":-4.931290471053321,"bestFinal":0.013857411958313262,"row_hash":"0xeb17be2e55b4ae9c"}
+{"seq":24,"kind":"l3.generation","gen":6,"bestScore":-6.24300607244312,"meanScore":-4.931290471053321,"bestFinal":0.013857411958313262,"row_hash":"0x273318300a55c6fe"}
+{"seq":25,"kind":"l3.generation","gen":7,"bestScore":-6.24300607244312,"meanScore":-4.931290471053321,"bestFinal":0.013857411958313262,"row_hash":"0x3797c47829a864bf"}
+{"seq":26,"kind":"l3.generation","gen":8,"bestScore":-6.24300607244312,"meanScore":-3.9913253013101424,"bestFinal":0.013857411958313262,"row_hash":"0x5fdaa63f78af7bc2"}
+{"seq":27,"kind":"l3.championship","rule":"crown","steps":700,"finalLoss":0.029524409178787153,"floor":0.029524409178787153,"row_hash":"0xdee8da6227e58d71"}
+{"seq":28,"kind":"l3.championship","rule":"sgd(0.08)","steps":700,"finalLoss":0.03528618061292973,"floor":0.03528618061292973,"row_hash":"0x272d56510b494ae2"}
+{"seq":29,"kind":"l3.championship","rule":"momentum(0.06)","steps":700,"finalLoss":0.2096750051977864,"floor":0.0070372903257370206,"row_hash":"0xf1816f3a122cd595"}
+{"seq":30,"kind":"l3.championship","rule":"momentum(0.3) tuned","steps":700,"finalLoss":0.000009522420335931009,"floor":0.000009522420335931009,"row_hash":"0x3f70e5eff05a93f9"}
+{"seq":31,"kind":"l3.championship","rule":"rmsprop(0.02)","steps":700,"finalLoss":0.11734230936974847,"floor":0.1173317794020842,"row_hash":"0x67cae9f538daff46"}
+{"seq":32,"kind":"l3.podium","champion":"momentum(0.3) tuned","crown":{"lr0":0.2,"schedule":"invtime","beta":0.9,"adaptive":"rms","hiddenMult":1.7968540885485709,"outMult":1.796853885985911,"decay":0},"row_hash":"0x001b7e908a6309ed"}

@@ -1,0 +1,147 @@
+{
+  "config": {
+    "N": 10,
+    "H": 4,
+    "eagerSteps": 700,
+    "lazySteps": 400,
+    "convergeAt": 0.01,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "T": 200,
+    "K": 10,
+    "pop": 24,
+    "gens": 8,
+    "evalSteps": 700,
+    "champSteps": 700
+  },
+  "smoke": false,
+  "l1": {
+    "fdProven": true
+  },
+  "l2": {
+    "board": {
+      "eps": {
+        "meanRegret": 56.59690820000001,
+        "sdRegret": 30.420973575584494,
+        "identified": 2,
+        "wins": 2
+      },
+      "ucb": {
+        "meanRegret": 42.59050180000001,
+        "sdRegret": 4.688482100108096,
+        "identified": 7,
+        "wins": 2
+      },
+      "bz": {
+        "meanRegret": 54.18079869999997,
+        "sdRegret": 34.139208580605924,
+        "identified": 1,
+        "wins": 5
+      },
+      "qm": {
+        "meanRegret": 63.192640000000075,
+        "sdRegret": 31.38799767707396,
+        "identified": 0,
+        "wins": 1
+      }
+    },
+    "winner": "ucb",
+    "harvest": {
+      "mock": false,
+      "digest": "0x1597d15409bbdb03",
+      "jobId": "b9586be0-3e30-4386-9c49-7b48da96ee7e"
+    }
+  },
+  "l3": {
+    "crown": {
+      "lr0": 0.2,
+      "schedule": "invtime",
+      "beta": 0.9,
+      "adaptive": "rms",
+      "hiddenMult": 1.7968540885485709,
+      "outMult": 1.796853885985911,
+      "decay": 0
+    },
+    "podium": {
+      "crown": {
+        "finalLoss": 0.029524409178787153,
+        "floor": 0.029524409178787153
+      },
+      "sgd(0.08)": {
+        "finalLoss": 0.03528618061292973,
+        "floor": 0.03528618061292973
+      },
+      "momentum(0.06)": {
+        "finalLoss": 0.2096750051977864,
+        "floor": 0.0070372903257370206
+      },
+      "momentum(0.3) tuned": {
+        "finalLoss": 0.000009522420335931009,
+        "floor": 0.000009522420335931009
+      },
+      "rmsprop(0.02)": {
+        "finalLoss": 0.11734230936974847,
+        "floor": 0.1173317794020842
+      }
+    },
+    "champion": "momentum(0.3) tuned",
+    "history": [
+      {
+        "gen": 1,
+        "best": -6.24300607244312,
+        "mean": -4.165792887443303
+      },
+      {
+        "gen": 2,
+        "best": -6.24300607244312,
+        "mean": -4.331984607493211
+      },
+      {
+        "gen": 3,
+        "best": -6.24300607244312,
+        "mean": -4.931320296555518
+      },
+      {
+        "gen": 4,
+        "best": -6.24300607244312,
+        "mean": -4.931290471053321
+      },
+      {
+        "gen": 5,
+        "best": -6.24300607244312,
+        "mean": -4.931290471053321
+      },
+      {
+        "gen": 6,
+        "best": -6.24300607244312,
+        "mean": -4.931290471053321
+      },
+      {
+        "gen": 7,
+        "best": -6.24300607244312,
+        "mean": -4.931290471053321
+      },
+      {
+        "gen": 8,
+        "best": -6.24300607244312,
+        "mean": -3.9913253013101424
+      }
+    ]
+  },
+  "chain": {
+    "links": 32,
+    "tip": "0x001b7e908a6309ed",
+    "digest": "0xe895a4a2eda715ff"
+  },
+  "finishedAt": "2026-09-25T23:55:00.413Z"
+}

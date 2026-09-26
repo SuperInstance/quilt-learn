@@ -21,7 +21,7 @@ import { fnv1a64 } from './receipts.mjs';
 import { rng, mean, sd } from './util.mjs';
 import { QuiltEngine } from '../engine/index.js';
 
-const EXPLORERS = ['eps', 'ucb', 'bz', 'qm'];
+export const EXPLORERS = ['eps', 'ucb', 'bz', 'qm'];
 
 // Deterministic environment: Bernoulli means per (seed, arm), and a fixed
 // outcome bit per (seed, arm, pull) — a PAIRED design: all explorers face

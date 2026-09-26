@@ -22,10 +22,10 @@ import { rng } from './util.mjs';
 
 const CELLREF = (id) => id; // exprs reference dotted ids as bare identifiers
 
-export function buildGradientSheet({ N = 12, H = 4, initSeed = 7, noiseAmp = 0 } = {}) {
+export function buildGradientSheet({ N = 12, H = 4, initSeed = 7, noiseAmp = 0, convergeAt = 0.01 } = {}) {
   const stream = rng(`init:${initSeed}`);
   const cells = [];
-  const meta = { N, H, paramIds: [], gradIds: [], init: {}, convergeAt: 0.01 };
+  const meta = { N, H, paramIds: [], gradIds: [], init: {}, convergeAt };
 
   // --- data cells: x in [-pi, pi], y = sin(x) (+ optional deterministic noise)
   for (let i = 0; i < N; i++) {
